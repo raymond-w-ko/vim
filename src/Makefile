@@ -325,13 +325,13 @@ CClink = $(CC)
 #CONF_ARGS = --without-local-dir
 
 # Use this one if you distribute a modified version of Vim.
-#CONF_ARGS = --with-modified-by="John Doe"
+CONF_ARGS = --with-modified-by="Raymond W. Ko"
 
 # GUI - For creating Vim with GUI (gvim) (B)
 # Uncomment this line when you don't want to get the GUI version, although you
 # have GTK, Motif and/or Athena.  Also use --without-x if you don't want X11
 # at all.
-#CONF_OPT_GUI = --disable-gui
+CONF_OPT_GUI = --disable-gui
 
 # Uncomment one of these lines if you have that GUI but don't want to use it.
 # The automatic check will use another one that can be found.
@@ -446,9 +446,9 @@ CClink = $(CC)
 # However, this may still cause problems, such as "import termios" failing.
 # Build two separate versions of Vim in that case.
 #CONF_OPT_PYTHON = --enable-pythoninterp
-#CONF_OPT_PYTHON = --enable-pythoninterp=dynamic
+CONF_OPT_PYTHON = --enable-pythoninterp=dynamic
 #CONF_OPT_PYTHON3 = --enable-python3interp
-#CONF_OPT_PYTHON3 = --enable-python3interp=dynamic
+CONF_OPT_PYTHON3 = --enable-python3interp=dynamic
 
 # RUBY
 # Uncomment this when you want to include the Ruby interface.
@@ -528,7 +528,7 @@ CClink = $(CC)
 #CONF_OPT_FEAT = --with-features=small
 #CONF_OPT_FEAT = --with-features=normal
 #CONF_OPT_FEAT = --with-features=big
-#CONF_OPT_FEAT = --with-features=huge
+CONF_OPT_FEAT = --with-features=huge
 
 # COMPILED BY - For including a specific e-mail address for ":version".
 #CONF_OPT_COMPBY = "--with-compiledby=John Doe <JohnDoe@yahoo.com>"
@@ -538,7 +538,7 @@ CClink = $(CC)
 # Also disable the GUI above, otherwise it will be included anyway.
 # When both GUI and X11 have been disabled this may save about 15% of the
 # code and make Vim startup quicker.
-#CONF_OPT_X = --without-x
+CONF_OPT_X = --with-x=yes
 
 # X WINDOWS DIRECTORY - specify X directories
 # If configure can't find you X stuff, or if you have multiple X11 derivatives
@@ -578,8 +578,15 @@ CClink = $(CC)
 # When using -g with some older versions of Linux you might get a
 # statically linked executable.
 # When not defined, configure will try to use -O2 -g for gcc and -O for cc.
-#CFLAGS = -g
-#CFLAGS = -O
+ifeq ($(shell uname -o),Cygwin)
+	CFLAGS += -O3 -mtune=native -march=native
+	LDFLAGS += -O3 -mtune=native -march=native
+else
+	CFLAGS += -O3 -flto -mtune=native -march=native
+	LDFLAGS += -O3 -flto -mtune=native -march=native
+endif
+#CFLAGS = -O0 -g3
+#LDFLAGS = -O0 -g3
 
 # Optimization limits - depends on the compiler.  Automatic check in configure
 # doesn't work very well, because many compilers only give a warning for
@@ -985,7 +992,7 @@ TOOLS = xxd/xxd$(EXEEXT)
 ### prefix	the top directory for the data (default "/usr/local")
 #
 # Uncomment the next line to install Vim in your home directory.
-#prefix = $(HOME)
+prefix = $(HOME)/vim
 
 ### exec_prefix	is the top directory for the executable (default $(prefix))
 #
@@ -1136,7 +1143,7 @@ INSTALL_DATA_R	= cp -r
 
 ### Program to run on installed binary.  Use the second one to disable strip.
 #STRIP = strip
-#STRIP = /bin/true
+STRIP = true
 
 ### Permissions for binaries  {{{1
 BINMOD = 755
