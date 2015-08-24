@@ -1114,7 +1114,7 @@ typedef struct hashitem_S
 
 /* Initial size for a hashtable.  Our items are relatively small and growing
  * is expensive, thus use 16 as a start.  Must be a power of 2. */
-#define HT_INIT_SIZE 16
+#define HT_INIT_SIZE 32
 
 typedef struct hashtable_S
 {

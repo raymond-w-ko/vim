@@ -469,10 +469,15 @@ hash_hash(char_u *key)
 	return (hash_T)0;
     p = key + 1;
 
-    /* A simplistic algorithm that appears to do very well.
-     * Suggested by George Reilly. */
-    while (*p != NUL)
-	hash = hash * 101 + *p++;
+    /* Jenkin's one at a time hash by Bob Jenkins, used in Perl */
+    while (*p != NUL) {
+	hash += *p++;
+	hash += hash << 10;
+	hash ^= hash >> 6;
+    }
+    hash += hash << 3;
+    hash ^= hash >> 11;
+    hash += hash << 15;
 
     return hash;
 }
