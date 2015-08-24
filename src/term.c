@@ -2398,7 +2398,7 @@ termcapinit(char_u *name)
 /*
  * the number of calls to ui_write is reduced by using the buffer "out_buf"
  */
-#define OUT_SIZE	2047
+# define OUT_SIZE	131071
 	    /* Add one to allow mch_write() in os_win32.c to append a NUL */
 static char_u		out_buf[OUT_SIZE + 1];
 static int		out_pos = 0;	/* number of chars in out_buf */
