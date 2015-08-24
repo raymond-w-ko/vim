@@ -4654,6 +4654,10 @@ win_free(
     block_autocmds();
 #endif
 
+#ifdef FEAT_JAVA
+    java_window_free(wp);
+#endif
+
 #ifdef FEAT_LUA
     lua_window_free(wp);
 #endif

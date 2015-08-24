@@ -1739,6 +1739,11 @@ static struct vimoption options[] =
 # endif
 #endif
 				(char_u *)0L} SCRIPTID_INIT},
+#ifdef FEAT_JAVA
+    {"javacp",      "jcp",  P_STRING|P_VIM|P_SECURE,
+			    (char_u *)&p_javacp, PV_NONE,
+			    {(char_u *)0L, (char_u *)""} SCRIPTID_INIT},
+#endif
     {"joinspaces",  "js",   P_BOOL|P_VI_DEF|P_VIM,
 			    (char_u *)&p_js, PV_NONE,
 			    {(char_u *)TRUE, (char_u *)0L} SCRIPTID_INIT},

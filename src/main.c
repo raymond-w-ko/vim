@@ -1475,6 +1475,9 @@ getout(int exitval)
 #ifdef FEAT_JOB_CHANNEL
     job_stop_on_exit();
 #endif
+#ifdef FEAT_JAVA
+    java_end();
+#endif
 #ifdef FEAT_LUA
     lua_end();
 #endif

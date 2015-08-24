@@ -598,6 +598,9 @@ EXTERN int	p_im;		/* 'insertmode' */
 EXTERN char_u	*p_isf;		/* 'isfname' */
 EXTERN char_u	*p_isi;		/* 'isident' */
 EXTERN char_u	*p_isp;		/* 'isprint' */
+#ifdef FEAT_JAVA
+EXTERN char_u	*p_javacp;	/* 'javacp' */
+#endif
 EXTERN int	p_js;		/* 'joinspaces' */
 EXTERN char_u	*p_kp;		/* 'keywordprg' */
 EXTERN char_u	*p_km;		/* 'keymodel' */

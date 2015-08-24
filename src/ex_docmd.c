@@ -144,7 +144,8 @@ static void	get_flags(exarg_T *eap);
 	|| !defined(FEAT_TCL) \
 	|| !defined(FEAT_RUBY) \
 	|| !defined(FEAT_LUA) \
-	|| !defined(FEAT_MZSCHEME)
+	|| !defined(FEAT_MZSCHEME) \
+	|| !defined(FEAT_JAVA)
 # define HAVE_EX_SCRIPT_NI
 static void	ex_script_ni(exarg_T *eap);
 #endif
@@ -264,6 +265,11 @@ static void	ex_popup(exarg_T *eap);
 #ifndef FEAT_PERSISTENT_UNDO
 # define ex_rundo		ex_ni
 # define ex_wundo		ex_ni
+#endif
+#ifndef FEAT_JAVA
+# define ex_java		ex_script_ni
+# define ex_javafile		ex_ni
+# define ex_javarepl		ex_ni
 #endif
 #ifndef FEAT_LUA
 # define ex_lua			ex_script_ni
@@ -2839,6 +2845,7 @@ do_one_cmd(
 	    case CMD_ilist:
 	    case CMD_isearch:
 	    case CMD_isplit:
+	    case CMD_java:
 	    case CMD_keepalt:
 	    case CMD_keepjumps:
 	    case CMD_keepmarks:

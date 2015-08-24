@@ -1465,7 +1465,8 @@ EXTERN char_u e_libcall[]	INIT(= N_("E364: Library call failed for \"%s()\""));
 	|| defined(DYNAMIC_ICONV) \
 	|| defined(DYNAMIC_GETTEXT) \
 	|| defined(DYNAMIC_MZSCHEME) \
-	|| defined(DYNAMIC_LUA)
+	|| defined(DYNAMIC_LUA) \
+	|| defined(DYNAMIC_JAVA)
 EXTERN char_u e_loadlib[]	INIT(= N_("E370: Could not load library %s"));
 EXTERN char_u e_loadfunc[]	INIT(= N_("E448: Could not load library function %s"));
 #endif

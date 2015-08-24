@@ -833,6 +833,9 @@ free_buffer(buf_T *buf)
 #ifdef FEAT_EVAL
     unref_var_dict(buf->b_vars);
 #endif
+#ifdef FEAT_JAVA
+    java_buffer_free(buf);
+#endif
 #ifdef FEAT_LUA
     lua_buffer_free(buf);
 #endif
