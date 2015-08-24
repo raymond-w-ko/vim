@@ -1625,6 +1625,7 @@ EXTERN char e_fsync[]		INIT(= N_("E667: Fsync failed"));
 	|| defined(DYNAMIC_GETTEXT) \
 	|| defined(DYNAMIC_MZSCHEME) \
 	|| defined(DYNAMIC_LUA) \
+	|| defined(DYNAMIC_JAVA) \
 	|| defined(FEAT_TERMINAL)
 EXTERN char e_loadlib[]	INIT(= N_("E370: Could not load library %s"));
 EXTERN char e_loadfunc[]	INIT(= N_("E448: Could not load library function %s"));

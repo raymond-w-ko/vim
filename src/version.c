@@ -305,6 +305,15 @@ static char *(features[]) =
 #else
 	"-ipv6",
 #endif
+#ifdef FEAT_JAVA
+# ifdef DYNAMIC_JAVA
+	"+java/dyn",
+# else
+	"+java",
+# endif
+#else
+	"-java",
+#endif
 #ifdef FEAT_JOB_CHANNEL
 	"+job",
 #else

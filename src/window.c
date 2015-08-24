@@ -4992,6 +4992,10 @@ win_free(
     // gui_mch_destroy_scrollbar() may trigger a FocusGained event.
     block_autocmds();
 
+#ifdef FEAT_JAVA
+    java_window_free(wp);
+#endif
+
 #ifdef FEAT_LUA
     lua_window_free(wp);
 #endif

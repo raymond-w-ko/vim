@@ -679,6 +679,9 @@ EXTERN char_u	*p_isf;		// 'isfname'
 EXTERN char_u	*p_isi;		// 'isident'
 EXTERN char_u	*p_isk;		// 'iskeyword'
 EXTERN char_u	*p_isp;		// 'isprint'
+#ifdef FEAT_JAVA
+EXTERN char_u	*p_javacp;	// 'javacp'
+#endif
 EXTERN int	p_js;		// 'joinspaces'
 #ifdef FEAT_CRYPT
 EXTERN char_u	*p_key;		// 'key'

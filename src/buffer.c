@@ -912,6 +912,9 @@ free_buffer(buf_T *buf)
     unref_var_dict(buf->b_vars);
     remove_listeners(buf);
 #endif
+#ifdef FEAT_JAVA
+    java_buffer_free(buf);
+#endif
 #ifdef FEAT_LUA
     lua_buffer_free(buf);
 #endif

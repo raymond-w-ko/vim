@@ -241,6 +241,10 @@ void mbyte_im_set_active(int active_arg);
 # endif
 # include "window.pro"
 
+# ifdef FEAT_JAVA
+#  include "if_java.pro"
+# endif
+
 # ifdef FEAT_LUA
 #  include "if_lua.pro"
 # endif

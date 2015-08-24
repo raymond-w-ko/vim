@@ -47,6 +47,11 @@
 #	  the DLL.  This reduces the total file size and memory usage.
 #	  Also supports `vim -g` and the `:gui` command.
 #
+#	Java interface:
+#	  JAVA=[Path to Java JDK directory]
+#	  DYNAMIC_JAVA=yes (to load the Java DLLs dynamically)
+#	  JAVA_VER=[Java JDK version]  (default is 17)
+#
 #	Lua interface:
 #	  LUA=[Path to Lua directory]
 #	  DYNAMIC_LUA=yes (to load the Lua DLL dynamically)
@@ -176,6 +181,9 @@ OBJDIR = $(OBJDIR)X
 !endif
 !if "$(OLE)" == "yes"
 OBJDIR = $(OBJDIR)O
+!endif
+!ifdef JAVA
+OBJDIR = $(OBJDIR)J
 !endif
 !ifdef LUA
 OBJDIR = $(OBJDIR)U
@@ -1224,6 +1232,28 @@ CFLAGS = $(CFLAGS) -DDYNAMIC_RUBY \
 CFLAGS = $(CFLAGS) -DRUBY_VERSION=$(RUBY_VER)
 !endif # RUBY
 
+# Java interface
+!ifdef JAVA
+!ifndef JAVA_VER
+JAVA_VER = 17
+!endif
+!message Java requested (version $(JAVA_VER)) - root dir is "$(JAVA)"
+!if "$(DYNAMIC_JAVA)" == "yes"
+!message Java DLL will be loaded dynamically
+!endif
+CFLAGS = $(CFLAGS) -DFEAT_JAVA -DJAVA_VER=$(JAVA_VER)
+JAVA_OBJ = $(OUTDIR)\if_java.obj
+JAVA_INC = /I "$(JAVA)\include" /I "$(JAVA)\include\win32"
+!if "$(DYNAMIC_JAVA)" == "yes"
+CFLAGS = $(CFLAGS) -DDYNAMIC_JAVA \
+		-DDYNAMIC_JAVA_DLL=\"jvm.dll\"
+JAVA_LIB = /nodefaultlib:jawt.lib /nodefaultlib:jvm.lib
+!else
+JAVA_LIB = "$(JAVA)\lib\jawt.lib" "$(JAVA)\lib\jvm.lib"
+!endif
+VIM_JAR = java/vim.jar
+!endif # JAVA
+
 #
 # Support PostScript printing
 #
@@ -1280,7 +1310,7 @@ conflags = $(conflags) /map /mapinfo:lines
 
 LINKARGS1 = $(linkdebug) $(conflags)
 LINKARGS2 = $(CON_LIB) $(GUI_LIB) $(NODEFAULTLIB) $(LIBC) $(OLE_LIB) user32.lib \
-		$(LUA_LIB) $(MZSCHEME_LIB) $(PERL_LIB) $(PYTHON_LIB) $(PYTHON3_LIB) $(RUBY_LIB) \
+		$(JAVA_LIB) $(LUA_LIB) $(MZSCHEME_LIB) $(PERL_LIB) $(PYTHON_LIB) $(PYTHON3_LIB) $(RUBY_LIB) \
 		$(TCL_LIB) $(SOUND_LIB) $(NETBEANS_LIB) $(XPM_LIB) $(LINK_PDB)
 
 # Report link time code generation progress if used. 
@@ -1314,7 +1344,8 @@ all:	$(MAIN_TARGET) \
 	uninstall.exe \
 	xxd/xxd.exe \
 	tee/tee.exe \
-	GvimExt/gvimext.dll
+	GvimExt/gvimext.dll \
+	$(VIM_JAR)
 
 # To get around the command line limit: Make use of nmake's response files to
 # capture the arguments for $(link) in a file  using the @<<ARGS<< syntax.
@@ -1345,13 +1376,13 @@ $(VIM).exe: $(OUTDIR) $(EXEOBJC) $(VIMDLLBASE).dll
 
 $(VIM).exe: $(OUTDIR) $(OBJ) $(XDIFF_OBJ) $(GUI_OBJ) $(CUI_OBJ) $(OLE_OBJ) $(OLE_IDL) $(MZSCHEME_OBJ) \
 		$(LUA_OBJ) $(PERL_OBJ) $(PYTHON_OBJ) $(PYTHON3_OBJ) $(RUBY_OBJ) $(TCL_OBJ) \
-		$(TERM_OBJ) $(SOUND_OBJ) $(NETBEANS_OBJ) $(CHANNEL_OBJ) $(XPM_OBJ) \
+		$(CSCOPE_OBJ) $(TERM_OBJ) $(SOUND_OBJ) $(NETBEANS_OBJ) $(CHANNEL_OBJ) $(XPM_OBJ) \
 		version.c version.h
 	$(CC) $(CFLAGS_OUTDIR) version.c
 	$(link) @<<
 $(LINKARGS1) /subsystem:$(SUBSYSTEM) -out:$(VIM).exe $(OBJ) $(XDIFF_OBJ) $(GUI_OBJ) $(CUI_OBJ) $(OLE_OBJ)
 $(LUA_OBJ) $(MZSCHEME_OBJ) $(PERL_OBJ) $(PYTHON_OBJ) $(PYTHON3_OBJ) $(RUBY_OBJ)
-$(TCL_OBJ) $(TERM_OBJ) $(SOUND_OBJ) $(NETBEANS_OBJ) $(CHANNEL_OBJ)
+$(TCL_OBJ) $(CSCOPE_OBJ) $(TERM_OBJ) $(SOUND_OBJ) $(NETBEANS_OBJ) $(CHANNEL_OBJ)
 $(XPM_OBJ) $(OUTDIR)\version.obj $(LINKARGS2)
 <<
 	if exist $(VIM).exe.manifest mt.exe -nologo -manifest $(VIM).exe.manifest -updateresource:$(VIM).exe;1
@@ -1394,6 +1425,10 @@ GvimExt/gvimext.dll: GvimExt/gvimext.cpp GvimExt/gvimext.rc GvimExt/gvimext.h
 	$(MAKE) /NOLOGO -f Makefile $(MAKEFLAGS_GVIMEXT)
 	cd ..
 
+java/vim.jar: java/Make_mvc.mak java/vim/*.java
+	cd java
+	$(MAKE) /NOLOGO -f Make_mvc.mak
+
 
 tags: notags
 	$(CTAGS) $(TAGS_FILES)
@@ -1435,6 +1470,9 @@ clean: testclean
 	cd ..
 	cd GvimExt
 	$(MAKE) /NOLOGO -f Makefile clean
+	cd ..
+	cd java
+	$(MAKE) /NOLOGO -f Make_mvc.mak clean
 	cd ..
 
 # Run vim script to generate the Ex command lookup table.
@@ -1616,6 +1654,9 @@ $(OUTDIR)/gui_w32.obj:	$(OUTDIR) gui_w32.c $(INCL) $(GUI_INCL) version.h
 $(OUTDIR)/gui_dwrite.obj:	$(OUTDIR) gui_dwrite.cpp gui_dwrite.h
 
 $(OUTDIR)/if_cscope.obj: $(OUTDIR) if_cscope.c  $(INCL) if_cscope.h
+
+$(OUTDIR)/if_java.obj: $(OUTDIR) if_java.c  $(INCL)
+	$(CC) $(CFLAGS) $(JAVA_INC) if_java.c
 
 $(OUTDIR)/if_lua.obj: $(OUTDIR) if_lua.c  $(INCL)
 	$(CC) $(CFLAGS_OUTDIR) $(LUA_INC) if_lua.c
