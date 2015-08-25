@@ -39,6 +39,9 @@ src/Obj*/pathdef.c
 gvimext.dll
 gvimext.lib
 runtime/doc/uganda.nsis.txt
+src/dimm.h
+src/dimm.tlb
+src/dimm_i.c
 
 # Borland C++
 bcc.cfg
