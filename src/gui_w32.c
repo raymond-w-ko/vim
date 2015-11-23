@@ -5201,7 +5201,7 @@ gui_mch_init(void)
 #endif
     gui.border_width = 0;
 
-    s_brush = CreateSolidBrush(GetSysColor(COLOR_BTNFACE));
+    s_brush = CreateSolidBrush(RGB(0, 0, 0));
 
     // First try using the wide version, so that we can use any title.
     // Otherwise only characters in the active codepage will work.
@@ -5305,7 +5305,7 @@ gui_mch_init(void)
 	wndclassw.hInstance = g_hinst;
 	wndclassw.hIcon = NULL;
 	wndclassw.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wndclassw.hbrBackground = NULL;
+	wndclassw.hbrBackground = s_brush;
 	wndclassw.lpszMenuName = NULL;
 	wndclassw.lpszClassName = szTextAreaClassW;
 
