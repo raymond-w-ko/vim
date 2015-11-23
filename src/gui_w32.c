@@ -5265,7 +5265,7 @@ gui_mch_init(void)
 #endif
     gui.border_width = 0;
 
-    s_brush = CreateSolidBrush(GetSysColor(COLOR_BTNFACE));
+    s_brush = CreateSolidBrush(RGB(0, 0, 0));
 
 #ifdef FEAT_MBYTE
     /* First try using the wide version, so that we can use any title.
@@ -5399,7 +5399,7 @@ gui_mch_init(void)
 	    wndclassw.hInstance = s_hinst;
 	    wndclassw.hIcon = NULL;
 	    wndclassw.hCursor = LoadCursor(NULL, IDC_ARROW);
-	    wndclassw.hbrBackground = NULL;
+	    wndclassw.hbrBackground = s_brush;
 	    wndclassw.lpszMenuName = NULL;
 	    wndclassw.lpszClassName = szTextAreaClassW;
 
@@ -5418,7 +5418,7 @@ gui_mch_init(void)
 	wndclass.hInstance = s_hinst;
 	wndclass.hIcon = NULL;
 	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wndclass.hbrBackground = NULL;
+	wndclass.hbrBackground = s_brush;
 	wndclass.lpszMenuName = NULL;
 	wndclass.lpszClassName = szTextAreaClass;
 
