@@ -1197,6 +1197,51 @@ Vim_GetPaths(PyObject *self UNUSED)
     return ret;
 }
 
+    static void
+resize_string_buffer(char** s, size_t* string_size)
+{
+    const size_t new_size = (*string_size) * 2;
+    char* new_string = malloc(new_size);
+    memcpy(new_string, *s, *string_size);
+    free(*s);
+    
+    *s = new_string;
+    *string_size = new_size;
+}
+
+    static PyObject *
+Vim_CopyBuf(PyObject *self UNUSED)
+{
+    PyObject	*ret;
+    static const int will_change = FALSE;
+    size_t string_size = 524288;
+    char* s;
+    linenr_T i;
+    linenr_T num_lines;
+    char_u* line;
+    size_t line_len;
+    size_t n = 0;
+    
+    s = malloc(string_size);
+    num_lines = curbuf->b_ml.ml_line_count;
+    for (i = 1; i <= num_lines; ++i) {
+	line = ml_get_buf(curbuf, i, will_change);
+	line_len = strlen(line);
+	while ((n + line_len + 1) >= string_size) {
+	    resize_string_buffer(&s, &string_size);
+	}
+	memcpy(s + n, line, line_len);
+	n += line_len;
+	s[n] = '\n';
+	n += 1;
+    }
+    s[n - 1] = '\0';
+
+    uint64_t pointer = (uint64_t)s;
+    ret = Py_BuildValue("K", pointer);
+    return ret;
+}
+
 #if PY_VERSION_HEX >= 0x030700f0
     static PyObject *
 FinderFindSpec(PyObject *self, PyObject *args)
@@ -1417,6 +1462,7 @@ static struct PyMethodDef VimMethods[] = {
     {"find_module", FinderFindModule,		METH_VARARGS,			"Internal use only, returns loader object for any input it receives"},
     {"path_hook",   VimPathHook,		METH_VARARGS,			"Hook function to install in sys.path_hooks"},
     {"_get_paths",  (PyCFunction)Vim_GetPaths,	METH_NOARGS,			"Get &rtp-based additions to sys.path"},
+    {"copy_buf",    (PyCFunction)Vim_CopyBuf,	METH_NOARGS,			"Returns a zero-terminal string copy of the buffer (need to free)"},
     { NULL,	    NULL,			0,				NULL}
 };
 
